@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+---
+<Base lang="en" header="solid" title="Page not found · Casa Lumbre" description="This page doesn't exist." alt={{ es: '/', en: '/en/' }}>
+  <section class="nf wrap">
+    <p class="label">404</p>
+    <h1 class="h2">This door doesn't open onto anything.</h1>
+    <p>Esta página no existe. Let's take you back to the house.</p>
+    <div class="nf__links"><Button href="/en/" variant="outline">home (english)</Button><Button href="/" variant="outline">inicio (español)</Button></div>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 60vh; display: grid; align-content: center; gap: 1.25rem; padding-block: 6rem; }
+  .nf__links { display: flex; gap: 1rem; flex-wrap: wrap; }
+</style>

@@ -19,7 +19,8 @@ const canonical = new URL(Astro.url.pathname, site).href;
 const hotel = {
   '@context': 'https://schema.org', '@type': 'Hotel', name: 'Casa Lumbre',
   address: { '@type': 'PostalAddress', streetAddress: 'Calle de la Lumbre 12', postalCode: '29008', addressLocality: 'Málaga', addressCountry: 'ES' },
-  telephone: '+34 952 000 000', email: 'hola@casalumbre.es', numberOfRooms: 12, checkinTime: '15:00', checkoutTime: '11:00', url: new URL(alt.es, site).href,
+  description: 'Design concept for a boutique hotel website by Lizzy Cruz. Casa Lumbre is not a real hotel and takes no bookings.',
+  creator: { '@type': 'Person', name: 'Lizzy Cruz', url: 'https://lizzymcruz.com' }, numberOfRooms: 12, checkinTime: '15:00', checkoutTime: '11:00', url: new URL(alt.es, site).href,
 };
 ---
 <!doctype html>
@@ -37,7 +38,6 @@ const hotel = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#3A3D2B" />
-    <meta name="robots" content="noindex" />
     <link rel="preload" href={scriptFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jostFont} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

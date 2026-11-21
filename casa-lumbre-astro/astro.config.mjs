@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://casa-lumbre.pages.dev',
@@ -9,4 +10,5 @@ export default defineConfig({
   },
   image: { responsiveStyles: true },
   build: { inlineStylesheets: 'always' },
+  integrations: [sitemap({ i18n: { defaultLocale: 'es', locales: { es: 'es-ES', en: 'en-GB' } } })],
 });
