@@ -1,0 +1,12 @@
+---
+interface Props { text: string; light?: boolean; center?: boolean }
+const { text, light = false, center = false } = Astro.props;
+---
+<p class:list={['sl label', { 'sl--light': light, 'sl--center': center }]}>{text}</p>
+<style>
+  .sl { display: grid; gap: .875rem; justify-items: start; }
+  .sl::after { content: ''; width: 40px; height: 1px; background: var(--accent-2); }
+  .sl--light { color: var(--text-inverse); opacity: .75; }
+  .sl--light::after { background: var(--salvia); }
+  .sl--center { justify-items: center; }
+</style>

@@ -1,0 +1,242 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from './Button.astro';
+import SectionLabel from './SectionLabel.astro';
+import RoomCard from './RoomCard.astro';
+import MobileBar from './MobileBar.astro';
+import WordmarkSvg from './WordmarkSvg.astro';
+import { ui, routes, type Lang } from '../i18n/ui';
+import { rooms } from '../data/rooms';
+import hero from '../assets/photos/hero.jpg';
+import tiles from '../assets/photos/tiles.jpg';
+import rooftop from '../assets/photos/rooftop.jpg';
+import hall from '../assets/photos/hall.jpg';
+import breakfast from '../assets/photos/breakfast.jpg';
+import sunset from '../assets/photos/sunset.jpg';
+import street from '../assets/photos/street.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const expImg = { breakfast, sunset, street } as const;
+const title = lang === 'es' ? 'Casa Lumbre · Hotel boutique en el centro histórico de Málaga' : 'Casa Lumbre · Boutique hotel in Málaga old town';
+const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, patio interior y azotea junto a la catedral de Málaga. Reserva directa con desayuno incluido.' : 'A 19th-century townhouse with twelve rooms, an inner courtyard and a rooftop by Málaga cathedral. Book direct with breakfast included.';
+---
+<Base lang={lang} title={title} description={desc} alt={{ es: routes.es.home, en: routes.en.home }}>
+  <!-- HERO -->
+  <section class="hero" aria-label="Casa Lumbre">
+    <Image src={hero} alt="" class="hero__img" widths={[640, 1024, 1536]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <div class="hero__scrim"></div>
+    <div class="hero__content">
+      <h1 class="hero__wm write"><WordmarkSvg /></h1>
+      <p class="label hero__sub">{t.heroSub}</p>
+    </div>
+    <a href="#house" class="hero__cue label fade-late">
+      <svg width="12" height="40" viewBox="0 0 12 40" aria-hidden="true"><path d="M6 0v38M1 33l5 6 5-6" stroke="currentColor" fill="none" /></svg>
+      {t.scroll}
+    </a>
+  </section>
+
+  <!-- INTRO COLLAGE -->
+  <section class="intro" id="house">
+    <div class="intro__collage">
+      <p class="intro__w1 reveal" aria-hidden="true"><span class="display-xl ghost" data-parallax="-0.9" data-word={t.big1}></span><span class="display-l muted" data-parallax="0.5">{t.small1}</span></p>
+      <div class="intro__a rot curtain" data-rotate="4200">
+        <Image src={tiles} alt={lang === 'es' ? 'Escalera de azulejos andaluces pintados a mano' : 'Hand-painted Andalusian tiles on an old staircase'} class="is-active" widths={[500, 800, 1000]} sizes="(max-width: 640px) 80vw, 36vw" />
+        <Image src={breakfast} alt="" widths={[500, 800]} sizes="(max-width: 640px) 80vw, 36vw" />
+        <Image src={hall} alt="" widths={[500, 800]} sizes="(max-width: 640px) 80vw, 36vw" />
+      </div>
+      <div class="intro__b rot curtain" data-rotate="5200">
+        <Image src={rooftop} alt={lang === 'es' ? 'Azotea al atardecer con vistas a la catedral de Málaga' : 'Rooftop at sunset looking towards Málaga cathedral'} class="is-active" widths={[600, 1000, 1400]} sizes="(max-width: 640px) 90vw, 60vw" />
+        <Image src={sunset} alt="" widths={[600, 1000]} sizes="(max-width: 640px) 90vw, 60vw" />
+        <Image src={street} alt="" widths={[600, 1000]} sizes="(max-width: 640px) 90vw, 60vw" />
+      </div>
+      <p class="intro__w2 reveal" aria-hidden="true"><span class="display-xl ghost" data-parallax="0.9" data-word={t.big2}></span><span class="display-l intro__olive" data-parallax="-0.5">{t.small2}</span></p>
+    </div>
+    <div class="wrap intro__copy">
+      <div class="reveal">
+        <SectionLabel text={t.introLabel} />
+        <h2 class="h2">{t.introTitle}</h2>
+      </div>
+      <div class="reveal">
+        <p class="body-l">{t.introBody}</p>
+        <Button href="#" variant="link">{t.introLink}</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOMS -->
+  <section class="section rooms" id="rooms">
+    <div class="wrap rooms__head reveal">
+      <div><SectionLabel text={t.roomsLabel} /><h2 class="h2">{t.roomsTitle}</h2></div>
+      <Button href="#rooms" variant="outline">{t.allRooms}</Button>
+    </div>
+    <div class="rooms__grid wrap" data-carousel>
+      {rooms.map((r) => <div class="rooms__item reveal"><RoomCard room={r} lang={lang} /></div>)}
+    </div>
+  </section>
+
+  <!-- ETHOS -->
+  <section class="ethos">
+    <div class="ethos__img curtain"><Image src={hall} alt={lang === 'es' ? 'Pasillo encalado con techo de caña y arco al patio' : 'Lime-washed hallway with a cane ceiling and an arch to the courtyard'} widths={[600, 900, 1100]} sizes="(max-width: 800px) 100vw, 53vw" /></div>
+    <div class="ethos__copy reveal">
+      <SectionLabel text={t.ethosLabel} />
+      <blockquote class="h2 italic">{t.ethosQuote}</blockquote>
+      <p>{t.ethosBody}</p>
+      <Button href="#" variant="link">{t.ethosLink}</Button>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="section exp" id="experiences">
+    <div class="wrap exp__head reveal"><SectionLabel text={t.expLabel} center /><h2 class="h2">{t.expTitle}</h2></div>
+    <div class="wrap exp__grid" data-carousel>
+      {t.exps.map((e) => (
+        <a href="#" class="tile curtain curtain--up">
+          <Image src={expImg[e.img]} alt="" widths={[400, 700]} sizes="(max-width: 640px) 70vw, 30vw" />
+          <span class="tile__txt"><span class="label">{e.label}</span><span class="h3">{e.title}</span></span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- BOOK DIRECT -->
+  <section class="direct" id="book">
+    <div class="wrap direct__in">
+      <div class="reveal"><SectionLabel text={t.directLabel} light /><h2 class="h2">{t.directTitle}</h2></div>
+      <ul class="direct__perks reveal">{t.perks.map((p) => <li>{p}</li>)}</ul>
+      <div class="direct__cta reveal">
+        <Button href={routes[lang].room(rooms[0].slug[lang]) + '#book'} variant="primary">{t.checkAvail}</Button>
+        <p class="caption">{t.reviews}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATION -->
+  <section class="section loc" id="location">
+    <div class="wrap loc__in">
+      <div class="loc__copy reveal">
+        <SectionLabel text={t.locLabel} />
+        <h2 class="h2">{t.locTitle}</h2>
+        <p class="muted">{t.locBody}<br />{t.locBody2}</p>
+        <Button href="https://maps.google.com/?q=Catedral+de+Malaga" variant="outline">{t.gettingHere}</Button>
+      </div>
+      <div class="loc__map reveal" role="img" aria-label={lang === 'es' ? 'Mapa ilustrado del centro de Málaga' : 'Illustrated map of central Málaga'}>
+        <svg viewBox="0 0 760 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity=".9"><path d="M-20 140C200 120 360 180 780 150"/><path d="M-20 330C240 300 420 360 780 320"/><path d="M160-20C180 160 140 330 200 540"/><path d="M430-20C410 180 470 340 440 540"/><path d="M600-20C640 200 580 360 640 540"/></g>
+          <g stroke="#fff" stroke-width="2.5" opacity=".7"><path d="M-20 230L780 250"/><path d="M300-20L320 540"/><path d="M-20 430L780 410"/><path d="M60-20L90 540"/></g>
+          <path d="M0 470C200 440 520 500 760 455V520H0Z" fill="#B9C3BE" opacity=".6"/>
+          <g transform="translate(330 190)"><path d="M20 51S38 32 38 20A18 18 0 0 0 2 20C2 32 20 51 20 51Z" fill="#B5573A"/><circle cx="20" cy="20" r="6" fill="#F6F1EA"/></g>
+          <text x="380" y="222" font-family="Jost" font-size="16" fill="#2B2622">casa lumbre</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <MobileBar lang={lang} slot="after" href={routes[lang].room(rooms[0].slug[lang]) + '#book'} label={t.book} line1={`${t.from} ${lang === 'es' ? '165 €' : '€165'} ${t.perNight}`} line2={t.bestRate} />
+</Base>
+
+<style>
+  /* hero */
+  .hero { position: relative; height: 100svh; min-height: 560px; max-height: 1100px; overflow: hidden; color: var(--text-inverse); display: grid; place-items: center; }
+  .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: zoom 18s var(--ease) both; }
+  @keyframes zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .hero__img { animation: none; } }
+  .hero__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(43 38 34 / .55) 0%, rgb(43 38 34 / .25) 30%, rgb(43 38 34 / .35) 60%, rgb(43 38 34 / .6) 100%), rgb(43 38 34 / .12); }
+  .hero__content { position: relative; text-align: center; padding-inline: 1.5rem; }
+  .hero__wm { width: clamp(320px, 48vw, 690px); margin: 0 auto; }
+  .hero__sub { color: var(--text-inverse); margin-top: 1rem; }
+  .hero__cue { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: .6rem; color: var(--text-inverse); text-decoration: none; }
+
+  /* intro collage */
+  .intro { padding-top: clamp(4rem, 9vw, 8rem); overflow: hidden; }
+  .intro__collage { display: grid; grid-template-columns: repeat(12, 1fr); max-width: var(--maxw); margin-inline: auto; row-gap: 1.5rem; }
+  .intro__w1, .intro__w2 { display: grid; }
+  .intro__w1 span, .intro__w2 span { display: block; }
+  .intro__w1 { grid-column: 1 / 8; grid-row: 1; padding-left: var(--gutter); align-self: center; }
+  .intro__w1 .display-l { margin: -.6em 0 0 2.4em; }
+  .intro__a { grid-column: 8 / 12; grid-row: 1; width: 100%; aspect-ratio: 3 / 2; }
+  .rot { position: relative; background: var(--bg-panel); }
+  .rot :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.6s var(--ease), transform 2s var(--ease); }
+  .rot :global(img.is-active) { opacity: 1; }
+  .intro__b { grid-column: 1 / 8; grid-row: 2; width: 100%; aspect-ratio: 16 / 7; }
+  .intro__w2 { grid-column: 7 / 13; grid-row: 3; justify-items: end; padding-right: var(--gutter); margin-top: -4rem; }
+  .intro__w2 .display-l { margin-top: -.55em; }
+  .intro__olive { color: var(--accent-2); }
+  .intro__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 8vw, 7rem); }
+  .intro__copy > div { display: grid; gap: 1.5rem; align-content: start; }
+  .intro__copy .h2 { max-width: 18ch; }
+  .intro__copy .body-l { max-width: 34ch; }
+  .intro__copy :global(.btn) { justify-self: start; }
+
+  /* rooms */
+  .rooms { padding-top: 0; }
+  .rooms__head { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 3.5rem; }
+  .rooms__head > div { display: grid; gap: 1.25rem; }
+  .rooms__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  /* ethos */
+  .ethos { display: grid; grid-template-columns: 53% 1fr; background: var(--bg-olive-soft); align-items: center; }
+  .ethos__img { width: 100%; height: 100%; min-height: 560px; }
+  .ethos__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ethos__copy { display: grid; gap: 1.75rem; padding: 4rem var(--gutter); max-width: 640px; }
+  .ethos__copy blockquote { margin: 0; font-size: clamp(1.625rem, 2.4vw, 2.125rem); max-width: 18ch; }
+  .ethos__copy p { max-width: 38ch; }
+  .ethos__copy :global(.btn) { justify-self: start; }
+
+  /* experiences */
+  .exp__head { display: grid; justify-items: center; gap: 1.25rem; margin-bottom: 3.5rem; text-align: center; }
+  .exp__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .tile { position: relative; display: block; aspect-ratio: 3 / 4.3; overflow: hidden; color: var(--text-inverse); text-decoration: none; background: var(--bg-panel); }
+  .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .tile:hover img { transform: scale(1.05); }
+  .tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgb(43 38 34 / .72)); }
+  .tile__txt { position: absolute; left: 1.75rem; right: 1.75rem; bottom: 1.75rem; z-index: 1; display: grid; gap: .4rem; }
+  .tile__txt .label { color: var(--text-inverse); }
+
+  /* direct */
+  .direct { background: var(--bg-olive-deep); color: var(--text-inverse); padding-block: clamp(3.5rem, 7vw, 6rem); }
+  .direct__in { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 3rem; align-items: center; }
+  .direct__in > div:first-child { display: grid; gap: 1.25rem; }
+  .direct .h2 { max-width: 16ch; }
+  .direct__perks { display: grid; gap: 1rem; }
+  .direct__perks li { display: flex; align-items: center; gap: .9rem; }
+  .direct__perks li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+  .direct__cta { display: grid; justify-items: end; gap: 1rem; }
+  .direct__cta .caption { color: var(--text-inverse); opacity: .75; }
+
+  /* location */
+  .loc__in { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(3rem, 7vw, 6rem); align-items: center; }
+  .loc__copy { display: grid; gap: 1.5rem; }
+  .loc__copy .h2 { max-width: 16ch; }
+  .loc__copy :global(.btn) { justify-self: start; }
+  .loc__map { background: var(--bg-olive-soft); aspect-ratio: 4 / 3; overflow: hidden; }
+  .loc__map svg { width: 100%; height: 100%; }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .intro__copy, .direct__in, .loc__in { grid-template-columns: 1fr; gap: 2rem; }
+    .direct__cta { justify-items: stretch; }
+    .direct__cta :global(.btn) { width: 100%; }
+    .ethos { grid-template-columns: 1fr; }
+    .ethos__img { min-height: 0; aspect-ratio: 1 / 1.05; }
+    .ethos__copy { padding-block: 3rem 3.5rem; }
+  }
+  @media (max-width: 760px) {
+    .intro__collage { grid-template-columns: minmax(0, 1fr); row-gap: 1.25rem; }
+    .intro .display-xl { font-size: clamp(3.75rem, 18vw, 5.25rem); }
+    .intro__w1, .intro__a, .intro__b, .intro__w2 { grid-column: 1; grid-row: auto; }
+    .intro__a { width: 78%; justify-self: end; }
+    .intro__b { width: 86%; aspect-ratio: 5 / 3; }
+    .intro__w2 { margin-top: 0; }
+    .rooms__head { flex-direction: column; align-items: start; margin-bottom: 2rem; }
+    .rooms__head :global(.btn) { order: 3; }
+    /* swipe carousels */
+    [data-carousel] { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-right: var(--gutter); scrollbar-width: none; }
+    [data-carousel]::-webkit-scrollbar { display: none; }
+    [data-carousel] > * { flex: 0 0 76%; scroll-snap-align: start; scroll-margin-left: var(--gutter); }
+    .exp__head { justify-items: start; text-align: left; margin-bottom: 2rem; }
+    .exp__head :global(.sl) { justify-items: start; }
+  }
+</style>

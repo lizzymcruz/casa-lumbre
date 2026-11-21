@@ -1,0 +1,26 @@
+---
+import Button from './Button.astro';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang; href: string; label: string; line1: string; line2: string }
+const { href, label, line1, line2 } = Astro.props;
+---
+<div class="mbar" data-mbar>
+  <div><p class="mbar__l1">{line1}</p><p class="caption">{line2}</p></div>
+  <Button href={href} variant="primary">{label}</Button>
+</div>
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-mbar]');
+  if (bar) {
+    const onScroll = () => bar.classList.toggle('is-on', window.scrollY > window.innerHeight * 0.5);
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>
+<style>
+  .mbar { display: none; }
+  @media (max-width: 640px) {
+    .mbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; justify-content: space-between; align-items: center; gap: 1rem; padding: .85rem 1.25rem calc(.85rem + env(safe-area-inset-bottom)); background: var(--bg-page); box-shadow: 0 -4px 16px rgb(43 38 34 / .12); transform: translateY(110%); transition: transform .45s var(--ease); }
+    .mbar.is-on { transform: none; }
+    .mbar__l1 { font: 400 .9375rem var(--f-sans); text-transform: lowercase; }
+    .mbar .caption { font-size: .6875rem; }
+  }
+</style>
