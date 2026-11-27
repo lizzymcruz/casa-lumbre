@@ -1,0 +1,40 @@
+---
+import Photo from './Photo.astro';
+import Button from './Button.astro';
+import { routes, ui, price, type Lang } from '../i18n/ui';
+import { metaList } from '../lib/core.mjs';
+import type { Room } from '../data/rooms';
+interface Props { room: Room; lang: Lang; ratio?: number }
+const { room, lang, ratio = 4 / 5 } = Astro.props;
+const t = ui[lang];
+const href = routes[lang].room(room.slug[lang]);
+---
+<article class="rc">
+  <a href={href} class="rc__img curtain" style={`aspect-ratio:${ratio}`} tabindex="-1" aria-hidden="true">
+    <Photo name={room.image} lang={lang} widths={[420, 640, 900]} ratio={ratio} sizes="(max-width: 640px) 80vw, 33vw" decorative />
+    {room.tag && <span class="rc__tag">{room.tag[lang]}</span>}
+  </a>
+  <div class="rc__top">
+    <h3 class="h3"><a href={href}>{room.name[lang]}</a></h3>
+    <p class="rc__price"><span class="caption">{t.from}</span> <b>{price(lang, room.price)}</b></p>
+  </div>
+  <Fragment set:html={metaList(room.meta[lang], ['users', 'area', 'view'], 'meta-ic rc__meta caption')} />
+  <p class="rc__desc">{room.short[lang]}</p>
+  <Button href={href} variant="link">{t.discoverRoom}</Button>
+</article>
+<style>
+  .rc { display: grid; gap: .85rem; align-content: start; }
+  .rc__img { position: relative; display: block; overflow: hidden; background: var(--bg-panel); margin-bottom: .4rem; }
+  .rc__img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .rc:hover .rc__img :global(img) { transform: scale(1.04); }
+  .rc__tag { position: absolute; top: 1rem; left: 1rem; background: var(--bg-page); color: var(--text); font: 400 .75rem/1 var(--f-sans); letter-spacing: .08em; text-transform: lowercase; padding: .5rem .8rem; border-radius: 999px; }
+  .rc__top { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem 1rem; }
+  .rc__top h3 { min-width: 0; }
+  .rc h3 a { text-decoration: none; }
+  .rc__price { display: flex; align-items: baseline; gap: .35rem; white-space: nowrap; margin: 0; }
+  .rc__price b { font: 400 1.375rem/1 var(--f-serif); }
+  .rc :global(.rc__meta) { gap: .3rem 1rem; color: var(--text-muted); }
+  .rc :global(.rc__meta svg) { color: var(--accent-2); }
+  .rc__desc { max-width: 36ch; }
+  .rc :global(.btn) { justify-self: start; }
+</style>

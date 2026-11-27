@@ -1,0 +1,217 @@
+---
+import Photo from './Photo.astro';
+import { bookingBar, ICON } from '../lib/core.mjs';
+import { site, paths } from '../lib/site';
+import Base from '../layouts/Base.astro';
+import Button from './Button.astro';
+import SectionLabel from './SectionLabel.astro';
+import RoomCard from './RoomCard.astro';
+import MobileBar from './MobileBar.astro';
+import { ui, routes, price, type Lang } from '../i18n/ui';
+import { rooms, type Room } from '../data/rooms';
+
+interface Props { lang: Lang; room: Room }
+const { lang, room } = Astro.props;
+const t = ui[lang];
+const others = rooms.filter((r) => r !== room).slice(0, 2);
+const [first, ...rest] = room.name[lang].split(' ');
+const bigWord = lang === 'es' ? rest.join(' ') || first : first;
+const smallWord = lang === 'es' ? (rest.length ? first.toLowerCase() + '.' : '') : rest.join(' ').toLowerCase() + '.';
+const alt = { es: routes.es.room(room.slug.es), en: routes.en.room(room.slug.en) };
+const schema = [{ '@context': 'https://schema.org', '@type': 'HotelRoom', name: room.name[lang], description: room.tagline[lang], occupancy: { '@type': 'QuantitativeValue', maxValue: Number(room.guests.slice(-1)) }, floorSize: { '@type': 'QuantitativeValue', value: room.size, unitCode: 'MTK' }, bed: room.bed[lang] }];
+const P = paths[lang];
+const bookHref = `${P.book}?room=${room.id}`;
+const half = Math.ceil(room.amenities[lang].length / 2);
+const cols = [room.amenities[lang].slice(0, half), room.amenities[lang].slice(half)];
+---
+<Base lang={lang} header="solid" title={`${room.name[lang]} · Casa Lumbre, Málaga`} description={`${room.tagline[lang]} ${room.meta[lang]}.`} alt={alt} schema={schema}>
+  <div class="hero-area">
+  <div class="wrap top">
+    <nav class="caption crumbs" aria-label="Breadcrumb"><a href={P.rooms}>{t.crumbs}</a><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span aria-current="page">{room.name[lang].toLowerCase()}</span></nav>
+    <div class="top__row">
+      <h1 class:list={['top__title', `top__title--${lang}`]}><span class="sr-only">{room.name[lang]}</span><span class="display-xl ghost" aria-hidden="true" data-word={bigWord}></span>{smallWord && <span class="display-l top__olive" aria-hidden="true">{smallWord}</span>}</h1>
+      <dl class="facts">
+        <div><dt class="label">{t.facts.guests}</dt><dd class="h3">{room.guests}</dd></div>
+        <div><dt class="label">{t.facts.size}</dt><dd class="h3">{room.size} m²</dd></div>
+        <div><dt class="label">{t.facts.bed}</dt><dd class="h3">{room.bed[lang]}</dd></div>
+        <div><dt class="label">{t.facts.view}</dt><dd class="h3">{room.view[lang]}</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="wrap gal">
+    {room.gallery.slice(0, 3).map((name, i) => (
+      <button type="button" class:list={['gal__btn', `gal__img--${i}`]} data-lb-open={i} aria-label={`${t.photos(room.gallery.length)}, ${i + 1}`}>
+        <Photo name={name} lang={lang} widths={i === 0 ? [640, 1000, 1400] : [420, 700]} sizes={i === 0 ? '(max-width: 760px) 100vw, 60vw' : '(max-width: 760px) 100vw, 30vw'} eager={i === 0} decorative={i > 0} alt={i === 0 ? room.name[lang] : undefined} />
+      </button>
+    ))}
+    <Button variant="light" class="gal__all" icon="expand" data-lb-open="0">{t.photos(room.gallery.length)}</Button>
+  </div>
+  <dialog class="lb" data-lb aria-label={t.photos(room.gallery.length)}>
+    <div class="gallery" data-gallery tabindex="0" aria-roledescription="carousel" aria-label={room.name[lang]}>
+      <div class="g-track">{room.gallery.map((name, i) => (
+        <div class:list={['g-slide', { 'is-on': i === 0 }]} role="group" aria-roledescription="slide" aria-label={`${i + 1} / ${room.gallery.length}`}>
+          <Photo name={name} lang={lang} widths={[800, 1400, 2000]} sizes="100vw" />
+        </div>))}</div>
+      <div class="g-ui"><span data-g-count aria-live="polite">1 / {room.gallery.length}</span>
+        <button type="button" data-g="-1" aria-label={lang === 'es' ? 'Foto anterior' : 'Previous photo'}><Fragment set:html={ICON.chevL} /></button>
+        <button type="button" data-g="1" aria-label={lang === 'es' ? 'Foto siguiente' : 'Next photo'}><Fragment set:html={ICON.chevR} /></button></div>
+    </div>
+    <button type="button" class="lb__close" data-lb-close aria-label={t.close}><Fragment set:html={ICON.close} /></button>
+  </dialog>
+  </div>
+  </div>
+
+  <div class="wrap body">
+    <div class="content">
+      <section class="intro reveal">
+        <SectionLabel text={t.roomLabel} />
+        <h2 class="h2">{room.tagline[lang]}</h2>
+        <p class="body-l">{room.body[lang]}</p>
+      </section>
+      <section class="amen reveal">
+        <h2 class="h3">{t.inRoom}</h2>
+        <div class="amen__cols">{cols.map((c) => <ul>{c.map((a) => <li>{a}</li>)}</ul>)}</div>
+      </section>
+      <section class="gtk reveal">
+        <h2 class="h3">{t.goodToKnow}</h2>
+        <dl>
+          <div><dt class="label">{t.gtk.checkin}</dt><dd>{lang === 'es' ? 'desde' : 'from'} {room.gtk.checkin}</dd></div>
+          <div><dt class="label">{t.gtk.checkout}</dt><dd>{lang === 'es' ? 'hasta' : 'until'} {room.gtk.checkout}</dd></div>
+          <div><dt class="label">{t.gtk.stairs}</dt><dd>{room.gtk.stairs[lang]}</dd></div>
+          <div><dt class="label">{t.gtk.children}</dt><dd>{room.gtk.children[lang]}</dd></div>
+        </dl>
+      </section>
+    </div>
+
+    <aside class="card" id="book" aria-label={t.checkAvail}>
+      <div class="card__in">
+        <p class="card__price"><span class="nav-text muted">{t.from}</span> <span class="h2">{price(lang, room.price)}</span> <span class="nav-text muted">{t.perNight}</span></p>
+        <p class="card__badge">{t.breakfastIncl} · {t.included}</p>
+        <Fragment set:html={bookingBar(site, lang, { room: room.id, price: room.price })} />
+        <ul class="perks">{t.perkShort.map((p) => <li><Fragment set:html={ICON.check} />{p}</li>)}</ul>
+        <p class="caption card__note">{t.demoPrice}</p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="other">
+    <div class="wrap other__head reveal">
+      <div><SectionLabel text={t.otherRooms} /><h2 class="h2">{t.alsoLike}</h2></div>
+      <Button href={P.rooms} variant="outline">{t.allRooms}</Button>
+    </div>
+    <div class="wrap other__grid" data-carousel>{others.map((r) => <div class="reveal"><RoomCard room={r} lang={lang} ratio={4 / 3} /></div>)}</div>
+  </section>
+
+  <MobileBar lang={lang} slot="after" href={bookHref} label={t.book} line1={`${price(lang, room.price)} ${t.perNight}`} line2={t.breakfastDirect} />
+</Base>
+
+<script>
+  // photo lightbox: opens the gallery dialog at the photo that was clicked
+  const lb = document.querySelector<HTMLDialogElement>('[data-lb]');
+  if (lb) {
+    const prev = lb.querySelector<HTMLButtonElement>('[data-g="-1"]')!;
+    document.querySelectorAll<HTMLElement>('[data-lb-open]').forEach((b) => b.addEventListener('click', () => {
+      lb.showModal();
+      const target = Number(b.dataset.lbOpen);
+      const slides = [...lb.querySelectorAll('.g-slide')];
+      const cur = slides.findIndex((x) => x.classList.contains('is-on'));
+      const next = lb.querySelector<HTMLButtonElement>('[data-g="1"]')!;
+      for (let k = 0; k < (target - cur + slides.length) % slides.length; k++) next.click();
+      (lb.querySelector('[data-gallery]') as HTMLElement).focus();
+    }));
+    lb.querySelector('[data-lb-close]')!.addEventListener('click', () => lb.close());
+    lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+    void prev;
+  }
+</script>
+
+<style>
+  .top { padding-top: 3rem; padding-bottom: 2.5rem; }
+  .top nav a { text-decoration: none; }
+  .top__row { display: flex; justify-content: space-between; align-items: end; gap: 2rem; flex-wrap: wrap; margin-top: 1.25rem; }
+  .top__title { display: grid; margin: 0; font-weight: 400; }
+  .top__title .display-l { margin-top: -.2em; }
+  .top__olive { color: var(--accent-2); }
+  .top__title--es { display: flex; flex-direction: column-reverse; }
+  .top__title--es .display-l { margin: 0 0 -.15em; }
+  .facts { display: flex; gap: 2rem; margin: 0; }
+  .facts div { display: grid; gap: .3rem; }
+  .facts dd { margin: 0; }
+
+  .gal { position: relative; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 1rem; height: min(600px, 62vw); }
+  .gal { overflow: hidden; }
+  .gal__btn { display: block; padding: 0; border: 0; background: var(--bg-panel); cursor: zoom-in; min-height: 0; overflow: hidden; }
+  .gal__btn :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .gal__btn:hover :global(img) { transform: scale(1.03); }
+  .gal__img--0 { grid-row: 1 / 3; }
+  .gal :global(.gal__all) { position: absolute; right: calc(var(--gutter) + 1.25rem); bottom: 1.25rem; background: rgb(43 38 34 / .35); backdrop-filter: blur(6px); }
+  .crumbs { display: flex; align-items: center; gap: .5rem; }
+  .lb { width: min(1200px, 94vw, 128vh); max-height: 92vh; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .lb::backdrop { background: rgb(43 38 34 / .88); }
+  .lb :global(.gallery) { outline: none; }
+  .lb :global(.g-track) { aspect-ratio: 3 / 2 !important; width: 100%; }
+  .lb :global(.g-slide img) { width: 100%; height: 100%; object-fit: cover; }
+  .lb__close { position: absolute; top: -3.25rem; right: 0; width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--bg-page); color: var(--text); cursor: pointer; }
+  .lb__close:hover { background: var(--accent); color: var(--text-inverse); }
+  .lb__close :global(svg) { width: 1.2rem; height: 1.2rem; }
+
+  .body { display: grid; grid-template-columns: 1fr 420px; gap: clamp(3rem, 6.6vw, 6rem); padding-block: clamp(3.5rem, 6.6vw, 6rem) clamp(4.5rem, 8vw, 7.5rem); align-items: start; }
+  .content { display: grid; gap: 3.5rem; min-width: 0; }
+  .body > * { min-width: 0; }
+  .intro { display: grid; gap: 1.25rem; }
+  .intro .h2 { max-width: 22ch; }
+  .intro .body-l { max-width: 56ch; }
+  .amen { display: grid; gap: 1.5rem; }
+  .amen__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 3rem; }
+  .amen ul { display: grid; gap: .85rem; }
+  .amen li { display: flex; gap: .75rem; align-items: baseline; }
+  .amen li::before { content: ''; width: 12px; height: 1px; background: var(--accent-2); flex: none; transform: translateY(-.3em); }
+  .gtk { background: var(--bg-olive-soft); padding: 1.75rem 2rem; display: grid; gap: 1.25rem; }
+  .gtk dl { display: flex; flex-wrap: wrap; gap: 1.25rem 3rem; margin: 0; }
+  .gtk dl div { display: grid; gap: .35rem; }
+  .gtk dd { margin: 0; }
+
+  .card { position: sticky; top: 7rem; background: var(--bg-panel); }
+  .card__in { display: grid; gap: 1.1rem; padding: 2rem; }
+  .card__badge { justify-self: start; background: var(--salvia); font: 400 .75rem/1.4 var(--f-sans); letter-spacing: .08em; text-transform: lowercase; padding: .45rem .85rem; border-radius: 999px; }
+  .card :global(.bbar) { grid-template-columns: repeat(2, minmax(0, 1fr)); box-shadow: none; background: var(--bg-page); }
+  .card :global(.bbar .bf) { border-bottom: 1px solid var(--border); }
+  .card :global(.bbar .bf:nth-child(2)) { border-right: 0; }
+  .card :global(.bbar .bf:nth-child(3)) { grid-column: 1 / -1; border-right: 0; }
+  .card :global(.bbar .btn) { grid-column: 1 / -1; border-radius: 0; min-height: 3.5rem; }
+  @media (max-width: 400px) { .card :global(.bbar) { grid-template-columns: minmax(0, 1fr); } .card :global(.bbar .bf) { border-right: 0; } .card__in { padding: 1.25rem; } }
+  .card__price { display: flex; align-items: baseline; gap: .5rem; }
+  .perks { display: grid; gap: .5rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--text); }
+  .perks li { display: flex; gap: .6rem; align-items: center; font: 400 .8125rem/1.5 var(--f-sans); }
+  .perks :global(svg) { width: 1rem; height: 1rem; color: var(--accent-2); flex: none; }
+  .card__note { font-size: .6875rem; }
+
+  .other { border-top: 1px solid var(--border); padding-block: clamp(4rem, 6.6vw, 6rem) clamp(5rem, 9vw, 8.75rem); }
+  .other__head { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 3rem; }
+  .other__head > div { display: grid; gap: 1.25rem; }
+  .other__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+  @media (max-width: 1000px) { .body { grid-template-columns: 1fr; } .card { position: static; } }
+  @media (max-width: 760px) {
+    .hero-area { display: flex; flex-direction: column-reverse; }
+    .top { padding-top: 2rem; padding-bottom: 0; }
+    .top__row { flex-direction: column; align-items: start; }
+    .facts { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; padding-block: 1.25rem; }
+    .facts dt { letter-spacing: .25em; }
+    .top__title .display-xl { font-size: min(5.25rem, 21vw); }
+    .top__title .display-l { font-size: min(2rem, 9vw); }
+    .gal { padding: 0; grid-template-columns: 100%; grid-template-rows: none; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; height: 440px; gap: 0; scrollbar-width: none; }
+    .gal::-webkit-scrollbar { display: none; }
+    .gal__btn { flex: 0 0 100%; scroll-snap-align: start; }
+    .gal :global(.gal__all) { right: 1rem; bottom: 1rem; }
+    .amen__cols { grid-template-columns: 1fr; }
+    .amen__cols ul + ul { margin-top: .85rem; }
+    .gtk dl { display: grid; gap: .75rem; }
+    .gtk dl div { display: flex; justify-content: space-between; }
+    .other__head { flex-direction: column; align-items: start; }
+    .other__head :global(.btn) { display: none; }
+    [data-carousel] { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; scrollbar-width: none; }
+    [data-carousel] > * { flex: 0 0 76%; scroll-snap-align: start; }
+  }
+</style>

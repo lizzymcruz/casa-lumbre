@@ -1,0 +1,25 @@
+---
+// Responsive photo from the Unsplash CDN. `ratio` crops on the CDN so phones download only what they show.
+import { photos, src, srcset, type PhotoKey } from '../data/photos';
+import type { Lang } from '../i18n/ui';
+interface Props {
+  name: PhotoKey; lang: Lang; widths?: number[]; sizes?: string; ratio?: number;
+  decorative?: boolean; eager?: boolean; class?: string; alt?: string;
+}
+const { name, lang, widths = [480, 800, 1200], sizes = '100vw', ratio, decorative = false, eager = false, class: cls, alt, ...rest } = Astro.props;
+const p = photos[name];
+const w = widths[widths.length - 1];
+---
+<img
+  class={cls}
+  src={src(name, widths[1] ?? w, ratio)}
+  srcset={srcset(name, widths, ratio)}
+  sizes={sizes}
+  alt={decorative ? '' : (alt ?? p.alt[lang])}
+  width={w}
+  height={ratio ? Math.round(w / ratio) : Math.round(w * 0.75)}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : 'auto'}
+  decoding="async"
+  {...rest}
+/>

@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionLabel from './SectionLabel.astro';
+import RoomCard from './RoomCard.astro';
+import { ui, type Lang } from '../i18n/ui';
+import { rooms } from '../data/rooms';
+import { paths } from '../lib/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const es = lang === 'es';
+const title = es ? 'Habitaciones y suites · Casa Lumbre, Málaga' : 'Rooms & suites · Casa Lumbre, Málaga';
+const desc = es ? 'Doce habitaciones en tres estilos alrededor de un patio interior en el centro de Málaga, desde 165 € la noche con desayuno.' : 'Twelve rooms in three styles around an inner courtyard in Málaga old town, from €165 a night with breakfast.';
+const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: 'Casa Lumbre', item: new URL(paths[lang].home, Astro.site).href },
+  { '@type': 'ListItem', position: 2, name: t.roomsTitle, item: new URL(paths[lang].rooms, Astro.site).href }] };
+---
+<Base lang={lang} header="solid" title={title} description={desc} alt={{ es: paths.es.rooms, en: paths.en.rooms }} schema={[crumbs]}>
+  <section class="wrap head reveal">
+    <SectionLabel text={t.roomsLabel} />
+    <h1 class="h2">{t.roomsTitle}</h1>
+    <p class="body-l muted">{es ? 'Doce habitaciones en tres estilos, todas alrededor del patio. Cada precio incluye desayuno en la azotea si reservas aquí.' : 'Twelve rooms in three styles, all around the courtyard. Every price includes breakfast on the rooftop when you book here.'}</p>
+  </section>
+  <section class="wrap grid">
+    {rooms.map((r) => <div class="reveal"><RoomCard room={r} lang={lang} ratio={4 / 5} /></div>)}
+  </section>
+</Base>
+<style>
+  .head { display: grid; gap: 1.25rem; padding-block: clamp(3rem, 7vw, 6rem) clamp(2rem, 4vw, 3.5rem); }
+  .head .body-l { max-width: 46ch; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 1.5rem; padding-bottom: clamp(5rem, 9vw, 8rem); }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .grid { grid-template-columns: minmax(0, 1fr); gap: 3rem; } }
+</style>

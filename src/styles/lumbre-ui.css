@@ -1,0 +1,58 @@
+/* Casa Lumbre skin for the shared booking + accessibility components (core.css).
+   Maps the shared tokens onto the Lumbre palette and type, then tunes a few components. */
+:root {
+  --c-bg: var(--cal); --c-card: #FBF8F3; --c-ink: var(--tinta); --c-muted: #5f564e; --c-soft: var(--arena);
+  --c-line: rgb(140 129 119 / .35); --c-accent: #A64E33; --c-on-accent: #fff; --c-accent-hover: var(--ascua);
+  --c-accent-text: #8A3B26; --c-highlight: var(--salvia); --c-dark: var(--bosque); --c-on-dark: var(--cal);
+  --c-focus: #A64E33; --c-error: #A3271B;
+  --f-head: 'EB Garamond', Georgia, serif; --f-body: 'Jost', system-ui, sans-serif;
+  --r-card: 0; --r-btn: 999px; --r-input: 0; --r-tag: 999px;
+  --btn-case: lowercase; --btn-ls: .06em; --btn-weight: 500; --nav-case: lowercase;
+  --max: 1440px; --gut: clamp(1.5rem, 6.6vw, 6rem);
+}
+
+/* booking bar */
+.bbar { background: var(--c-card); border: 0; box-shadow: 0 24px 50px -28px rgb(43 38 34 / .35); }
+.bbar .bf small { font-family: var(--f-body); font-weight: 400; letter-spacing: .28em; text-transform: lowercase; font-size: .7rem; }
+.bbar .bf b, .bbar .bf select { font-family: var(--f-head); font-weight: 400; font-size: 1.15rem; }
+.bbar .bf svg { color: var(--olivo); }
+.bbar .btn { font-family: var(--f-body); }
+.btn { font-family: var(--f-body); font-size: .8125rem; }
+.btn svg { width: 14px; height: 14px; }
+
+/* booking page */
+.flow h1 { font: 400 clamp(2rem, 3.4vw, 2.75rem)/1.15 var(--f-head); }
+.flow .eyebrow, .ok .eyebrow, .summary h2 { font: 400 .8125rem/1.4 var(--f-body); letter-spacing: .45em; text-transform: lowercase; color: var(--c-muted); }
+.fr h3, .summary h3 { font-family: var(--f-head); font-weight: 400; }
+.fr { border: 0; box-shadow: 0 16px 36px -26px rgb(43 38 34 / .35); background: var(--c-card); }
+.summary { border: 0; background: var(--arena); box-shadow: none; }
+.summary .save { background: var(--salvia); color: var(--tinta); }
+.tag-soft { background: var(--salvia); color: var(--tinta); }
+.flow-bar { background: var(--arena); }
+.steps-bar li { font-family: var(--f-body); text-transform: lowercase; letter-spacing: .04em; }
+.ok h1 { font-family: var(--f-head); }
+.field input, .field textarea { background: var(--c-card); }
+
+/* date picker */
+.dp-sheet h2, .dp-month h3 { font-family: var(--f-head); font-weight: 400; }
+
+/* accessibility button sits above the mobile booking bar */
+@media (max-width: 640px) { .a11y-btn { bottom: auto; top: 58%; } }
+
+/* high contrast: Lumbre's own tokens too */
+html.a-contrast { --cal: #fff; --arena: #fff; --salvia: #fff; --bosque: #000; --tinta: #000; --piedra: #000; --olivo: #000;
+  --bg-page: #fff; --bg-panel: #fff; --bg-olive-soft: #fff; --bg-olive-deep: #000; --bg-inverse: #000; --text: #000; --text-muted: #000; --accent: #000; --accent-hover: #000; --accent-2: #000; --border: #000; }
+html.a-contrast .display-xl { opacity: 1; }
+
+/* stop-animations switch: show everything straight away */
+html.a-motion .reveal, html.a-motion .curtain, html.a-motion .curtain img { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+html.a-motion .write, html.a-motion .fade-late, html.a-motion .bar-in, html.a-motion .settle, html.a-motion .hero__img { animation: none !important; }
+
+/* simpler-font switch also covers Lumbre's serif body text */
+html.a-font, html.a-font body, html.a-font .h2, html.a-font .h3, html.a-font .display-l, html.a-font .label, html.a-font .nav-text, html.a-font .caption { font-family: Verdana, Tahoma, 'Segoe UI', sans-serif !important; letter-spacing: 0 !important; }
+
+/* form section titles in Lumbre's lowercase spaced label style */
+.fieldset legend { font: 400 .8125rem/1.4 var(--f-body); letter-spacing: .45em; text-transform: lowercase; color: var(--c-muted); }
+
+/* nothing may push the page sideways (zooming hero photo, parallax words) */
+body { overflow-x: clip; }

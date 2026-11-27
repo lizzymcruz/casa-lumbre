@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { bookBody } from '../lib/core.mjs';
+import { site, paths } from '../lib/site';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const es = lang === 'es';
+---
+<Base lang={lang} header="solid" title={es ? 'Reserva directa · Casa Lumbre, Málaga' : 'Book direct · Casa Lumbre, Málaga'}
+  description={es ? 'Reserva Casa Lumbre en tres pasos: mejor tarifa, desayuno incluido, cancelación gratuita y nada que pagar hasta llegar.' : 'Book Casa Lumbre in three steps: best rate, breakfast included, free cancellation and nothing to pay until you arrive.'}
+  alt={{ es: paths.es.book, en: paths.en.book }}>
+  <div class="bookpage"><Fragment set:html={bookBody(site, lang)} /></div>
+</Base>
+<style>
+  .bookpage { padding-bottom: clamp(4rem, 8vw, 7rem); }
+</style>

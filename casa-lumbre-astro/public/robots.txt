@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://casa-lumbre.pages.dev/sitemap-index.xml

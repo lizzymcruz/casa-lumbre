@@ -1,0 +1,25 @@
+---
+interface Props { href?: string; variant?: 'primary' | 'outline' | 'light' | 'link'; type?: 'button' | 'submit'; class?: string; full?: boolean; icon?: 'arrow' | 'expand' | 'none'; [k: string]: unknown }
+const { href, variant = 'primary', type = 'button', class: cls, full = false, icon = 'arrow', ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag href={href} type={href ? undefined : type} class:list={['btn', `btn--${variant}`, { 'btn--full': full }, cls]} {...rest}>
+  <span><slot /></span>
+  {icon === 'arrow' && <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11L11 3M5 3h6v6" stroke="currentColor" stroke-width="1.2" fill="none" /></svg>}
+  {icon === 'expand' && <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>}
+</Tag>
+<style>
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; font: 500 .8125rem/1 var(--f-sans); letter-spacing: .06em; text-transform: lowercase; text-decoration: none; border-radius: 999px; padding: .95rem 1.65rem; border: 1px solid transparent; cursor: pointer; transition: background-color .3s var(--ease), color .3s, border-color .3s; white-space: nowrap; }
+  .btn svg { transition: transform .3s var(--ease); }
+  .btn:hover svg { transform: translate(2px, -2px); }
+  .btn--primary { background: var(--accent); color: var(--text-inverse); }
+  .btn--primary:hover { background: var(--accent-hover); }
+  .btn--outline { border-color: currentColor; color: var(--text); background: transparent; }
+  .btn--outline:hover { background: var(--text); color: var(--text-inverse); border-color: var(--text); }
+  .btn--light { border-color: var(--text-inverse); color: var(--text-inverse); background: transparent; }
+  .btn--light:hover { background: var(--text-inverse); color: var(--text); }
+  .btn--link { padding: .35rem 0; border-radius: 0; color: inherit; background: none; }
+  .btn--link span { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .4s var(--ease); padding-bottom: 2px; }
+  .btn--link:hover span { background-size: 100% 1px; }
+  .btn--full { width: 100%; }
+</style>

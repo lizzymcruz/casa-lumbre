@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionLabel from './SectionLabel.astro';
+import { paths, type PageKey } from '../lib/site';
+import { photos } from '../data/photos';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang; page: 'privacy' | 'legal' | 'accessibility' }
+const { lang, page } = Astro.props;
+const credits = Object.values(photos).map((p) => `<a href="${p.page}">${p.by}</a>`).join(', ');
+const C = {
+  privacy: {
+    es: ['Privacidad', 'Política de privacidad', ['Esta es una web de demostración de un hotel ficticio. Los datos de reservas y formularios no se envían ni se guardan en ningún servidor.', 'Tus preferencias de accesibilidad y las fechas que buscas se guardan solo en tu navegador (localStorage), para que la web las recuerde.', '<span id="cookies"></span>No usamos cookies, analítica ni publicidad. Las fotos se cargan desde Unsplash, que puede registrar la petición como cualquier servidor de imágenes.', 'En la web de un hotel real, esta página indicaría el responsable del tratamiento, la base legal según el RGPD, el plazo de conservación y cómo ejercer tus derechos ante la AEPD.']],
+    en: ['Privacy', 'Privacy policy', ['This is a demonstration website for a fictional hotel. Booking and form data is not sent or stored on any server.', 'Your accessibility choices and the dates you search are saved only in your own browser (localStorage), so the site remembers them.', '<span id="cookies"></span>We use no cookies, analytics or advertising. Photos load from Unsplash, which may log the request like any image server.', 'On a real hotel website this page would name the data controller, the legal basis under the GDPR, how long data is kept and how to exercise your rights with the Spanish data protection agency (AEPD).']],
+  },
+  legal: {
+    es: ['Aviso legal', 'Aviso legal', ['Casa Lumbre es un hotel ficticio creado como demostración de diseño y desarrollo por Lizzy Cruz (<a href="https://lizzymcruz.com">lizzymcruz.com</a>).', 'Todos los nombres, direcciones, teléfonos, precios y opiniones son inventados.', `Fotografías de Unsplash, bajo la licencia de Unsplash: ${credits}.`, 'En una web real, esta página incluiría la razón social, el NIF/CIF, el domicilio y el número de registro turístico de Andalucía, como exige la LSSI-CE.']],
+    en: ['Legal', 'Legal notice', ['Casa Lumbre is a fictional hotel created as a design and development demonstration by Lizzy Cruz (<a href="https://lizzymcruz.com">lizzymcruz.com</a>).', 'All names, addresses, phone numbers, prices and reviews are invented.', `Photographs from Unsplash, used under the Unsplash License: ${credits}.`, "On a real website this page would include the company name, tax ID (NIF/CIF), registered address and Andalusian tourism registration number, as Spanish law (LSSI-CE) requires."]],
+  },
+  accessibility: {
+    es: ['Accesibilidad', 'Declaración de accesibilidad', ['Queremos que cualquier persona pueda encontrar y reservar una habitación en esta web, sea cual sea su dispositivo o tecnología de apoyo.', 'La web busca cumplir las WCAG 2.2 nivel AA: contraste suficiente, todo se puede usar con teclado y muestra un foco visible, los formularios tienen etiquetas y mensajes de error claros, y las imágenes tienen texto alternativo.', 'Con el botón de accesibilidad puedes aumentar el texto hasta un 50%, activar el alto contraste, detener las animaciones, subrayar los enlaces, añadir espacio entre letras y líneas o usar una fuente más sencilla. Tus preferencias se recuerdan en este dispositivo.', 'La web también respeta la reducción de movimiento de tu dispositivo y admite zoom hasta el 400%.', '¿Has encontrado un problema? Escríbenos a <a href="mailto:hola@casalumbre.es">hola@casalumbre.es</a>.']],
+    en: ['Accessibility', 'Accessibility statement', ['We want everyone to be able to find and book a room on this website, whatever device or assistive technology they use.', 'The site aims to meet WCAG 2.2 level AA: enough contrast, everything works with a keyboard and shows a visible focus ring, forms have labels and clear error messages, and images have text alternatives.', 'Use the accessibility button to make text up to 50% larger, switch to high contrast, stop animations, underline links, add spacing between letters and lines or use a simpler font. Your choices are remembered on this device.', 'The site also follows your device’s reduced-motion setting and supports zoom up to 400%.', 'Found a problem? Tell us at <a href="mailto:hola@casalumbre.es">hola@casalumbre.es</a>.']],
+  },
+} as const;
+const [label, h, ps] = C[page][lang];
+---
+<Base lang={lang} header="solid" title={`${h} · Casa Lumbre`} description={ps[0].replace(/<[^>]+>/g, '')} alt={{ es: paths.es[page as PageKey], en: paths.en[page as PageKey] }}>
+  <section class="wrap tp">
+    <SectionLabel text={label.toLowerCase()} />
+    <h1 class="h2">{h}</h1>
+    {ps.map((p) => <p set:html={p} />)}
+  </section>
+</Base>
+<style>
+  .tp { display: grid; gap: 1.25rem; max-width: calc(46rem + 2 * var(--gutter)); margin-inline: 0; padding-block: clamp(3rem, 7vw, 6rem) clamp(5rem, 9vw, 8rem); }
+  .tp p { color: var(--text-muted); font-size: 1.125rem; }
+  .tp :global(a) { color: var(--accent); }
+</style>

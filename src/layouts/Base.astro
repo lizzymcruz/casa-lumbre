@@ -1,26 +1,38 @@
 ---
+import '../styles/core.css';
 import '../styles/global.css';
+import '../styles/lumbre-ui.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { ui, type Lang } from '../i18n/ui';
-import scriptFont from '@fontsource/ms-madi/files/ms-madi-latin-400-normal.woff2?url';
+import { a11yPanel } from '../lib/core.mjs';
+import { siteJSON } from '../lib/site';
+import { src } from '../data/photos';
 import jostFont from '@fontsource/jost/files/jost-latin-400-normal.woff2?url';
+import serifFont from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
 
 interface Props {
   lang: Lang; title: string; description: string;
   alt: { es: string; en: string };
   header?: 'overlay' | 'solid';
   schema?: Record<string, unknown>[];
+  ogImage?: string;
+  noindex?: boolean;
 }
-const { lang, title, description, alt, header = 'overlay', schema = [] } = Astro.props;
+const { lang, title, description, alt, header = 'overlay', schema = [], ogImage, noindex = false } = Astro.props;
 const t = ui[lang];
 const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).href;
+const og = ogImage ?? src('hero', 1200, 1200 / 630);
 const hotel = {
-  '@context': 'https://schema.org', '@type': 'Hotel', name: 'Casa Lumbre',
-  address: { '@type': 'PostalAddress', streetAddress: 'Calle de la Lumbre 12', postalCode: '29008', addressLocality: 'Málaga', addressCountry: 'ES' },
+  '@context': 'https://schema.org', '@type': 'Hotel', '@id': new URL('/#hotel', site).href, name: 'Casa Lumbre',
+  address: { '@type': 'PostalAddress', streetAddress: 'Calle de la Lumbre 12', postalCode: '29008', addressLocality: 'Málaga', addressRegion: 'Málaga', addressCountry: 'ES' },
+  geo: { '@type': 'GeoCoordinates', latitude: 36.7213, longitude: -4.4192 },
+  telephone: '+34 952 000 000', email: 'hola@casalumbre.es', priceRange: '€€€', image: og,
   description: 'Design concept for a boutique hotel website by Lizzy Cruz. Casa Lumbre is not a real hotel and takes no bookings.',
-  creator: { '@type': 'Person', name: 'Lizzy Cruz', url: 'https://lizzymcruz.com' }, numberOfRooms: 12, checkinTime: '15:00', checkoutTime: '11:00', url: new URL(alt.es, site).href,
+  creator: { '@type': 'Person', name: 'Lizzy Cruz', url: 'https://lizzymcruz.com' }, numberOfRooms: 12, checkinTime: '15:00', checkoutTime: '11:00',
+  amenityFeature: ['Rooftop terrace', 'Breakfast included', 'Inner courtyard', 'Air conditioning', 'Free Wi-Fi'].map((n) => ({ '@type': 'LocationFeatureSpecification', name: n, value: true })),
+  availableLanguage: ['es', 'en'], url: new URL(alt.es, site).href,
 };
 ---
 <!doctype html>
@@ -30,18 +42,26 @@ const hotel = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="es" href={new URL(alt.es, site).href} />
     <link rel="alternate" hreflang="en" href={new URL(alt.en, site).href} />
     <link rel="alternate" hreflang="x-default" href={new URL(alt.es, site).href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Casa Lumbre" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_GB'} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#3A3D2B" />
-    <link rel="preload" href={scriptFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preload" href={jostFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script is:inline>document.documentElement.classList.remove('no-js')</script>
+    <link rel="manifest" href="/site.webmanifest" />
+    <script is:inline>document.documentElement.classList.remove('no-js');try{var a=JSON.parse(localStorage.getItem('a11y'))||{};var h=document.documentElement;h.setAttribute('data-text',a.text||0);a.contrast&&h.classList.add('a-contrast');(a.motion||matchMedia('(prefers-reduced-motion: reduce)').matches)&&h.classList.add('a-motion');a.links&&h.classList.add('a-links');a.spacing&&h.classList.add('a-spacing');a.font&&h.classList.add('a-font')}catch(e){}</script>
     <script type="application/ld+json" set:html={JSON.stringify([hotel, ...schema])} />
   </head>
   <body data-header={header}>
@@ -50,6 +70,9 @@ const hotel = {
     <main id="main"><slot /></main>
     <Footer lang={lang} />
     <slot name="after" />
+    <Fragment set:html={a11yPanel(lang)} />
+    <script is:inline set:html={`window.SITE=${JSON.stringify(siteJSON(lang)).replace(/</g, '\\u003c')}`} />
+    <script is:inline src="/js/core.js" defer></script>
     <script>import '../scripts/motion.ts';</script>
   </body>
 </html>

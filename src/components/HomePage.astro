@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Button from './Button.astro';
 import SectionLabel from './SectionLabel.astro';
@@ -8,34 +7,29 @@ import MobileBar from './MobileBar.astro';
 import WordmarkSvg from './WordmarkSvg.astro';
 import { ui, routes, type Lang } from '../i18n/ui';
 import { rooms } from '../data/rooms';
-import hero from '../assets/photos/hero.jpg';
-import tiles from '../assets/photos/tiles.jpg';
-import rooftop from '../assets/photos/rooftop.jpg';
-import hall from '../assets/photos/hall.jpg';
-import breakfast from '../assets/photos/breakfast.jpg';
-import sunset from '../assets/photos/sunset.jpg';
-import street from '../assets/photos/street.jpg';
+import Photo from './Photo.astro';
+import { paths } from '../lib/site';
+import { bookingBar } from '../lib/core.mjs';
+import { site } from '../lib/site';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = ui[lang];
-const expImg = { breakfast, sunset, street } as const;
+const P = paths[lang];
+const expHref = { breakfast: P.book, sunset: routes[lang].room(rooms[2].slug[lang]), street: '#location' } as const;
 const title = lang === 'es' ? 'Casa Lumbre · Hotel boutique en el centro histórico de Málaga' : 'Casa Lumbre · Boutique hotel in Málaga old town';
 const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, patio interior y azotea junto a la catedral de Málaga. Reserva directa con desayuno incluido.' : 'A 19th-century townhouse with twelve rooms, an inner courtyard and a rooftop by Málaga cathedral. Book direct with breakfast included.';
 ---
 <Base lang={lang} title={title} description={desc} alt={{ es: routes.es.home, en: routes.en.home }}>
   <!-- HERO -->
   <section class="hero" aria-label="Casa Lumbre">
-    <Image src={hero} alt="" class="hero__img" widths={[640, 1024, 1536]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <Photo name="hero" lang={lang} class="hero__img" widths={[640, 1024, 1600, 2200]} sizes="100vw" eager decorative />
     <div class="hero__scrim"></div>
     <div class="hero__content">
       <h1 class="hero__wm write"><WordmarkSvg /></h1>
       <p class="label hero__sub">{t.heroSub}</p>
     </div>
-    <a href="#house" class="hero__cue label fade-late">
-      <svg width="12" height="40" viewBox="0 0 12 40" aria-hidden="true"><path d="M6 0v38M1 33l5 6 5-6" stroke="currentColor" fill="none" /></svg>
-      {t.scroll}
-    </a>
+    <div class="wrap hero__bar bar-in"><Fragment set:html={bookingBar(site, lang)} /></div>
   </section>
 
   <!-- INTRO COLLAGE -->
@@ -43,14 +37,14 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
     <div class="intro__collage">
       <p class="intro__w1 reveal" aria-hidden="true"><span class="display-xl ghost" data-parallax="-0.9" data-word={t.big1}></span><span class="display-l muted" data-parallax="0.5">{t.small1}</span></p>
       <div class="intro__a rot curtain" data-rotate="4200">
-        <Image src={tiles} alt={lang === 'es' ? 'Escalera de azulejos andaluces pintados a mano' : 'Hand-painted Andalusian tiles on an old staircase'} class="is-active" widths={[500, 800, 1000]} sizes="(max-width: 640px) 80vw, 36vw" />
-        <Image src={breakfast} alt="" widths={[500, 800]} sizes="(max-width: 640px) 80vw, 36vw" />
-        <Image src={hall} alt="" widths={[500, 800]} sizes="(max-width: 640px) 80vw, 36vw" />
+        <Photo name="tiles" lang={lang} class="is-active" widths={[480, 800, 1000]} ratio={3 / 2} sizes="(max-width: 640px) 80vw, 36vw" />
+        <Photo name="breakfast" lang={lang} widths={[480, 800, 1000]} ratio={3 / 2} sizes="(max-width: 640px) 80vw, 36vw" decorative />
+        <Photo name="courtyard" lang={lang} widths={[480, 800, 1000]} ratio={3 / 2} sizes="(max-width: 640px) 80vw, 36vw" decorative />
       </div>
       <div class="intro__b rot curtain" data-rotate="5200">
-        <Image src={rooftop} alt={lang === 'es' ? 'Azotea al atardecer con vistas a la catedral de Málaga' : 'Rooftop at sunset looking towards Málaga cathedral'} class="is-active" widths={[600, 1000, 1400]} sizes="(max-width: 640px) 90vw, 60vw" />
-        <Image src={sunset} alt="" widths={[600, 1000]} sizes="(max-width: 640px) 90vw, 60vw" />
-        <Image src={street} alt="" widths={[600, 1000]} sizes="(max-width: 640px) 90vw, 60vw" />
+        <Photo name="rooftop" lang={lang} class="is-active" widths={[600, 1000, 1400]} ratio={16 / 7} sizes="(max-width: 640px) 90vw, 60vw" />
+        <Photo name="sunset" lang={lang} widths={[600, 1000, 1400]} ratio={16 / 7} sizes="(max-width: 640px) 90vw, 60vw" decorative />
+        <Photo name="street" lang={lang} widths={[600, 1000, 1400]} ratio={16 / 7} sizes="(max-width: 640px) 90vw, 60vw" decorative />
       </div>
       <p class="intro__w2 reveal" aria-hidden="true"><span class="display-xl ghost" data-parallax="0.9" data-word={t.big2}></span><span class="display-l intro__olive" data-parallax="-0.5">{t.small2}</span></p>
     </div>
@@ -61,7 +55,7 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
       </div>
       <div class="reveal">
         <p class="body-l">{t.introBody}</p>
-        <Button href="#" variant="link">{t.introLink}</Button>
+        <Button href={P.rooms} variant="link">{t.introLink}</Button>
       </div>
     </div>
   </section>
@@ -70,7 +64,7 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
   <section class="section rooms" id="rooms">
     <div class="wrap rooms__head reveal">
       <div><SectionLabel text={t.roomsLabel} /><h2 class="h2">{t.roomsTitle}</h2></div>
-      <Button href="#rooms" variant="outline">{t.allRooms}</Button>
+      <Button href={P.rooms} variant="outline">{t.allRooms}</Button>
     </div>
     <div class="rooms__grid wrap" data-carousel>
       {rooms.map((r) => <div class="rooms__item reveal"><RoomCard room={r} lang={lang} /></div>)}
@@ -79,12 +73,12 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
 
   <!-- ETHOS -->
   <section class="ethos">
-    <div class="ethos__img curtain"><Image src={hall} alt={lang === 'es' ? 'Pasillo encalado con techo de caña y arco al patio' : 'Lime-washed hallway with a cane ceiling and an arch to the courtyard'} widths={[600, 900, 1100]} sizes="(max-width: 800px) 100vw, 53vw" /></div>
+    <div class="ethos__img curtain"><Photo name="hall" lang={lang} widths={[600, 900, 1200]} sizes="(max-width: 800px) 100vw, 53vw" /></div>
     <div class="ethos__copy reveal">
       <SectionLabel text={t.ethosLabel} />
       <blockquote class="h2 italic">{t.ethosQuote}</blockquote>
       <p>{t.ethosBody}</p>
-      <Button href="#" variant="link">{t.ethosLink}</Button>
+      <Button href="#experiences" variant="link">{t.ethosLink}</Button>
     </div>
   </section>
 
@@ -93,8 +87,8 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
     <div class="wrap exp__head reveal"><SectionLabel text={t.expLabel} center /><h2 class="h2">{t.expTitle}</h2></div>
     <div class="wrap exp__grid" data-carousel>
       {t.exps.map((e) => (
-        <a href="#" class="tile curtain curtain--up">
-          <Image src={expImg[e.img]} alt="" widths={[400, 700]} sizes="(max-width: 640px) 70vw, 30vw" />
+        <a href={expHref[e.img]} class="tile curtain curtain--up">
+          <Photo name={e.img} lang={lang} widths={[400, 700, 900]} ratio={3 / 4.3} sizes="(max-width: 640px) 70vw, 30vw" decorative />
           <span class="tile__txt"><span class="label">{e.label}</span><span class="h3">{e.title}</span></span>
         </a>
       ))}
@@ -107,7 +101,7 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
       <div class="reveal"><SectionLabel text={t.directLabel} light /><h2 class="h2">{t.directTitle}</h2></div>
       <ul class="direct__perks reveal">{t.perks.map((p) => <li>{p}</li>)}</ul>
       <div class="direct__cta reveal">
-        <Button href={routes[lang].room(rooms[0].slug[lang]) + '#book'} variant="primary">{t.checkAvail}</Button>
+        <Button href={P.book} variant="primary">{t.checkAvail}</Button>
         <p class="caption">{t.reviews}</p>
       </div>
     </div>
@@ -134,12 +128,12 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
     </div>
   </section>
 
-  <MobileBar lang={lang} slot="after" href={routes[lang].room(rooms[0].slug[lang]) + '#book'} label={t.book} line1={`${t.from} ${lang === 'es' ? '165 €' : '€165'} ${t.perNight}`} line2={t.bestRate} />
+  <MobileBar lang={lang} slot="after" href={P.book} label={t.book} line1={`${t.from} ${lang === 'es' ? '165 €' : '€165'} ${t.perNight}`} line2={t.bestRate} />
 </Base>
 
 <style>
   /* hero */
-  .hero { position: relative; height: 100svh; min-height: 560px; max-height: 1100px; overflow: hidden; color: var(--text-inverse); display: grid; place-items: center; }
+  .hero { position: relative; height: 100svh; min-height: 620px; max-height: 1100px; overflow: hidden; color: var(--text-inverse); display: grid; place-items: center; }
   .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: zoom 18s var(--ease) both; }
   @keyframes zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) { .hero__img { animation: none; } }
@@ -147,8 +141,9 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
   .hero__content { position: relative; text-align: center; padding-inline: 1.5rem; }
   .hero__wm { width: clamp(320px, 48vw, 690px); margin: 0 auto; }
   .hero__sub { color: var(--text-inverse); margin-top: 1rem; }
-  .hero__cue { position: absolute; bottom: 2.5rem; left: 0; right: 0; margin-inline: auto; width: max-content; padding-left: .45em; display: grid; justify-items: center; gap: .6rem; color: var(--text-inverse); text-decoration: none; }
-  .hero__cue svg { margin-left: -.45em; }
+  .bar-in { animation: fadeUp .9s .5s var(--ease) both; }
+  @media (prefers-reduced-motion: reduce) { .bar-in { animation: none; } }
+  .hero__bar { position: absolute; left: 0; right: 0; bottom: 2.5rem; z-index: 2; color: var(--text); }
   .hero__sub { padding-left: .45em; }
 
   /* intro collage */
@@ -217,6 +212,13 @@ const desc = lang === 'es' ? 'Una casa del siglo XIX con doce habitaciones, pati
   .loc__map svg { width: 100%; height: 100%; }
 
   /* responsive */
+  @media (max-width: 820px) {
+    .hero { height: auto; min-height: 0; max-height: none; display: block; overflow: visible; overflow-x: clip; }
+    .hero__img { position: relative; height: 62svh; min-height: 360px; }
+    .hero__scrim { bottom: auto; height: 62svh; min-height: 360px; }
+    .hero__content { position: absolute; top: 0; left: 0; right: 0; height: 62svh; min-height: 360px; display: grid; place-content: center; }
+    .hero__bar { position: relative; bottom: auto; margin-top: -2.5rem; }
+  }
   @media (max-width: 900px) {
     .intro__copy, .direct__in, .loc__in { grid-template-columns: 1fr; gap: 2rem; }
     .direct__cta { justify-items: stretch; }
