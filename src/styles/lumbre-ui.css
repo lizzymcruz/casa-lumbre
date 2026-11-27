@@ -1,7 +1,7 @@
 /* Casa Lumbre skin for the shared booking + accessibility components (core.css).
    Maps the shared tokens onto the Lumbre palette and type, then tunes a few components. */
 :root {
-  --c-bg: var(--cal); --c-card: #FBF8F3; --c-ink: var(--tinta); --c-muted: #5f564e; --c-soft: var(--arena);
+  --c-bg: var(--bg-page); --c-card: #fff; --c-ink: var(--tinta); --c-muted: #5f564e; --c-soft: var(--arena);
   --c-line: rgb(140 129 119 / .35); --c-accent: #A64E33; --c-on-accent: #fff; --c-accent-hover: var(--ascua);
   --c-accent-text: #8A3B26; --c-highlight: var(--salvia); --c-dark: var(--bosque); --c-on-dark: var(--cal);
   --c-focus: #A64E33; --c-error: #A3271B;
@@ -41,7 +41,7 @@
 
 /* high contrast: Lumbre's own tokens too */
 html.a-contrast { --cal: #fff; --arena: #fff; --salvia: #fff; --bosque: #000; --tinta: #000; --piedra: #000; --olivo: #000;
-  --bg-page: #fff; --bg-panel: #fff; --bg-olive-soft: #fff; --bg-olive-deep: #000; --bg-inverse: #000; --text: #000; --text-muted: #000; --accent: #000; --accent-hover: #000; --accent-2: #000; --border: #000; }
+  --bg-page: #fff; --bg-header: #fff; --bg-panel: #fff; --bg-olive-soft: #fff; --bg-olive-deep: #000; --bg-inverse: #000; --text: #000; --text-muted: #000; --accent: #000; --accent-hover: #000; --accent-2: #000; --border: #000; }
 html.a-contrast .display-xl { opacity: 1; }
 
 /* stop-animations switch: show everything straight away */

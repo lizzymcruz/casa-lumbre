@@ -19,7 +19,8 @@
   --tinta: #2B2622;    /* ink */
 
   /* semantic */
-  --bg-page: var(--cal);
+  --bg-page: #FDFCFA; /* off-white page; limewash stays for the header */
+  --bg-header: var(--cal);
   --bg-panel: var(--arena);
   --bg-olive-soft: var(--salvia);
   --bg-olive-deep: var(--bosque);
